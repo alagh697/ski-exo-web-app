@@ -15,7 +15,7 @@
 
     - name: Cloner le projet
       git:
-        repo: "git@github.com:mon-utilisateur/mon-projet-nextjs.git"
+        repo: "git@github.com:alagh697/ski-exo-web-app.git"
         dest: "/home/ubuntu/app"
         version: main
         force: yes
