@@ -12,6 +12,16 @@ function HomePageHeroSection() {
       fill
       className='object-cover'
       />
+      <div
+      className='absolute top-0 left-0 w-full h-full bg-black/10 '
+      >
+        <h1
+        className='text-5xl font-bold'
+        >
+        {`SKi eemi`}
+        </h1>
+        
+      </div>
     </section>
   )
 }

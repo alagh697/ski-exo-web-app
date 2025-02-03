@@ -1,0 +1,34 @@
+- name: Déploiement de l’application Next.js
+  hosts: web
+  become: yes
+  tasks:
+    - name: Mettre à jour le système
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+    - name: Installer Node.js et PM2
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+        apt-get install -y nodejs
+        npm install -g pm2
+
+    - name: Cloner le projet
+      git:
+        repo: "git@github.com:mon-utilisateur/mon-projet-nextjs.git"
+        dest: "/home/ubuntu/app"
+        version: main
+        force: yes
+
+    - name: Installer les dépendances
+      shell: |
+        cd /home/ubuntu/app
+        npm install
+        npm run build
+
+    - name: Démarrer l’application avec PM2
+      shell: |
+        cd /home/ubuntu/app
+        pm2 start npm --name "next-app" -- run start
+        pm2 save
+        pm2 startup
