@@ -1,9 +1,9 @@
 - name: Déploiement de l’application Next.js
-  hosts: web
+  hosts: webserver
   become: yes
   vars:
-    repo_url: "https://github.com/alagh697/ski-exo-web-app.git"
-    app_dir: "/home/ubuntu/ski-exo-web-app"
+    repo_url: "https://github.com/Goutte-de-mer/eemi-tailwind.git"
+    app_dir: "/home/ubuntu/eemi-tailwind"
   tasks:
     - name: Mettre à jour le système
       apt:
@@ -12,7 +12,7 @@
 
     - name: Installer Node.js et PM2
       shell: |
-        curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+        curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
         apt-get install -y nodejs
         npm install -g pm2
 
@@ -33,7 +33,7 @@
       shell: |
         cd {{ app_dir }}
         git reset --hard
-        git pull
+        git pull origin main
       when: git_repo.stat.exists
 
     - name: Installer les dépendances et builder
@@ -45,6 +45,5 @@
     - name: Démarrer l’application avec PM2
       shell: |
         cd {{ app_dir }}
-        pm2 restart npm --name "next-app" -- run start || pm2 start npm --name "next-app" -- run start
+        pm2 restart next-app || pm2 start node_modules/next/dist/bin/next --name "next-app" -- start
         pm2 save
-        pm2 startup  
