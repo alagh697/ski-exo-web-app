@@ -2,8 +2,8 @@
   hosts: web
   become: yes
   vars:
-    repo_url: "git@github.com:alagh697/ski-exo-web-app.git"
-    app_dir: "/home/ubuntu/app"
+    repo_url: "https://github.com/alagh697/ski-exo-web-app.git"
+    app_dir: "/home/ubuntu/ski-exo-web-app"
   tasks:
     - name: Mettre à jour le système
       apt:
@@ -16,12 +16,25 @@
         apt-get install -y nodejs
         npm install -g pm2
 
-    - name: Cloner le projet
+    - name: Vérifier si le dossier du projet existe
+      stat:
+        path: "{{ app_dir }}/.git"
+      register: git_repo
+
+    - name: Cloner le projet s'il n'existe pas
       git:
         repo: "{{ repo_url }}"
         dest: "{{ app_dir }}"
         version: main
         force: yes
+      when: not git_repo.stat.exists
+
+    - name: Mettre à jour le projet si déjà cloné
+      shell: |
+        cd {{ app_dir }}
+        git reset --hard
+        git pull
+      when: git_repo.stat.exists
 
     - name: Installer les dépendances et builder
       shell: |
@@ -34,4 +47,4 @@
         cd {{ app_dir }}
         pm2 restart npm --name "next-app" -- run start || pm2 start npm --name "next-app" -- run start
         pm2 save
-        pm2 startup
+        pm2 startup  
