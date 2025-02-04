@@ -1,6 +1,9 @@
 - name: Déploiement de l’application Next.js
   hosts: web
   become: yes
+  vars:
+    repo_url: "git@github.com:alagh697/ski-exo-web-app.git"
+    app_dir: "/home/ubuntu/app"
   tasks:
     - name: Mettre à jour le système
       apt:
@@ -15,20 +18,20 @@
 
     - name: Cloner le projet
       git:
-        repo: "git@github.com:alagh697/ski-exo-web-app.git"
-        dest: "/home/ubuntu/app"
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
         version: main
         force: yes
 
-    - name: Installer les dépendances
+    - name: Installer les dépendances et builder
       shell: |
-        cd /home/ubuntu/app
+        cd {{ app_dir }}
         npm install
         npm run build
 
     - name: Démarrer l’application avec PM2
       shell: |
-        cd /home/ubuntu/app
-        pm2 start npm --name "next-app" -- run start
+        cd {{ app_dir }}
+        pm2 restart npm --name "next-app" -- run start || pm2 start npm --name "next-app" -- run start
         pm2 save
         pm2 startup
