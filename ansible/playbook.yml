@@ -1,9 +1,9 @@
 - name: Déploiement de l’application Next.js
-  hosts: webserver
+  hosts: web
   become: yes
   vars:
-    repo_url: "https://github.com/Goutte-de-mer/eemi-tailwind.git"
-    app_dir: "/home/ubuntu/eemi-tailwind"
+    repo_url: "https://github.com/alagh697/ski-exo-web-app.git"
+    app_dir: "/home/ubuntu/ski-exo-web-app"
   tasks:
     - name: Mettre à jour le système
       apt:
@@ -33,7 +33,7 @@
       shell: |
         cd {{ app_dir }}
         git reset --hard
-        git pull origin main
+        git pull
       when: git_repo.stat.exists
 
     - name: Installer les dépendances et builder
@@ -47,3 +47,54 @@
         cd {{ app_dir }}
         pm2 restart next-app || pm2 start node_modules/next/dist/bin/next --name "next-app" -- start
         pm2 save
+# - name: Déploiement de l’application Next.js
+#   hosts: web
+#   become: yes
+#   vars:
+#     repo_url: "https://github.com/alagh697/ski-exo-web-app.git"
+#     app_dir: "/home/ubuntu/ski-exo-web-app"
+#   tasks:
+#     - name: Mettre à jour le système
+#       apt:
+#         update_cache: yes
+#         upgrade: yes
+
+#     - name: Installer Node.js et PM2
+#       shell: |
+#         curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+#         apt-get install -y nodejs
+#         npm install -g pm2
+
+#     - name: Vérifier si le dossier du projet existe
+#       stat:
+#         path: "{{ app_dir }}/.git"
+#       register: git_repo
+
+#     - name: Cloner le projet s'il n'existe pas
+#       git:
+#         repo: "{{ repo_url }}"
+#         dest: "{{ app_dir }}"
+#         version: main
+#         force: yes
+#       when: not git_repo.stat.exists
+
+#     - name: Mettre à jour le projet si déjà cloné
+#       shell: |
+#         cd {{ app_dir }}
+#         git reset --hard
+#         git pull
+#       when: git_repo.stat.exists
+
+#     - name: Installer les dépendances et builder
+#       shell: |
+#         cd {{ app_dir }}
+#         npm install
+#         npm run build
+
+#     - name: Démarrer l’application avec PM2
+#       shell: |
+#         cd {{ app_dir }}
+#         pm2 restart npm --name "next-app" -- run start || pm2 start npm --name "next-app" -- run start
+#         pm2 save
+#         pm2 startup  
+
