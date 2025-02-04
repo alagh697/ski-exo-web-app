@@ -1,6 +1,6 @@
 - name: Déploiement de l’application Next.js
   hosts: web
-  become: yes
+  # become: yes
   vars:
     repo_url: "https://github.com/alagh697/ski-exo-web-app.git"
     app_dir: "/home/ubuntu/ski-exo-web-app"
