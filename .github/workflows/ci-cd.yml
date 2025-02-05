@@ -18,21 +18,21 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 54.155.72.23 >> ~/.ssh/known_hosts  # Remplace par ton IP
+          ssh-keyscan -H 34.251.4.225 >> ~/.ssh/known_hosts  # Remplace par ton IP
 
       - name: Vérifier la connexion SSH
-        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@54.155.72.23 "echo 'Connexion SSH réussie'"
+        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@34.251.4.225 "echo 'Connexion SSH réussie'"
 
       - name: Corriger les permissions du dépôt
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@54.155.72.23 << 'EOF'
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@34.251.4.225 << 'EOF'
           sudo chown -R ubuntu:ubuntu /home/ubuntu/ski-exo-web-app
           sudo chmod -R 755 /home/ubuntu/ski-exo-web-app
           EOF
 
       - name: Déployer sur le serveur
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@54.155.72.23 << 'EOF'
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@34.251.4.225 << 'EOF'
           cd /home/ubuntu/ski-exo-web-app || git clone https://github.com/algh697/ski-exo-web-app.git /home/ubuntu/ski-exo-web-app && cd /home/ubuntu/ski-exo-web-app
           git fetch origin master
           git reset --hard origin/master

@@ -18,7 +18,7 @@ function HomePageHeroSection() {
         <h1
         className='text-5xl font-bold -rotate-45 upercase text-blue-200'
         >
-        {`SKi eemi 2025 ci-cd.haaa`}
+        {`SKi eemi 2025 ci-cd.haaa kjbnjlb`}
         </h1>
         
       </div>
