@@ -16,7 +16,7 @@ function HomePageHeroSection() {
       className='absolute top-0 left-0 w-full h-full bg-black/10 '
       >
         <h1
-        className='text-5xl font-bold -rotate-45 upercase text-blue-800'
+        className='text-5xl font-bold -rotate-45 upercase text-blue-200'
         >
         {`SKi eemi 2025 ci-cd.haaa`}
         </h1>
