@@ -1,27 +1,32 @@
-name: Deploy with Ansible
+name: Deploy Next.js App
 
 on:
   push:
     branches:
-      - main  # Déclenche l’action sur push dans "main"
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Récupérer le code
         uses: actions/checkout@v3
 
-      - name: Setup SSH
+      - name: Ajouter la clé SSH privée et configurer SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H 54.155.72.23 >> ~/.ssh/known_hosts  # Remplace par ton IP
 
-      - name: Install Ansible
-        run: sudo apt update && sudo apt install -y ansible
+      - name: Vérifier la connexion SSH
+        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@54.155.72.23 "echo 'Connexion SSH réussie'"
 
-      - name: Run Ansible Playbook
-        run: ansible-playbook -i inventory playbook.yml
+      - name: Exécuter Ansible Playbook
+        uses: dawidd6/action-ansible-playbook@v3
+        with:
+          playbook: ansible/playbook.yml
+          inventory: ansible/inventory.ini
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          options: "-u ubuntu"
