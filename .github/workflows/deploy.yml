@@ -1,33 +1,27 @@
-name: Déploiement Next.js avec Ansible
+name: Deploy with Ansible
 
 on:
   push:
     branches:
-      - main  # Déclenche le déploiement à chaque push sur "main"
+      - main  # Déclenche l’action sur push dans "main"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Récupérer le code du projet
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Copier les fichiers Ansible sur le serveur
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.AWS_SERVER_IP }}
-          username: ubuntu
-          key: ${{ secrets.AWS_SSH_KEY }}
-          source: "ansible/"
-          target: "~/"
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 54.155.72.23 >> ~/.ssh/known_hosts  # Remplace par ton IP
 
-      - name: Exécuter Ansible pour le déploiement
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_SERVER_IP }}
-          username: ubuntu
-          key: ${{ secrets.AWS_SSH_KEY }}
-          script: |
-            cd ~/ansible
-            ansible-playbook -i hosts.ini playbook.yml
+      - name: Install Ansible
+        run: sudo apt update && sudo apt install -y ansible
+
+      - name: Run Ansible Playbook
+        run: ansible-playbook -i inventory playbook.yml
