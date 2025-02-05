@@ -29,4 +29,4 @@ jobs:
           playbook: ansible/playbook.yml
           inventory: ansible/inventory.ini
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          options: "-u ubuntu" --inventory-file=ansible/inventory.ini"
+          options: "-u ubuntu" 
