@@ -34,8 +34,8 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@54.155.72.23 << 'EOF'
           cd /home/ubuntu/ski-exo-web-app || git clone https://github.com/algh697/ski-exo-web-app.git /home/ubuntu/ski-exo-web-app && cd /home/ubuntu/ski-exo-web-app
-          git fetch origin main
-          git reset --hard origin/main
+          git fetch origin master
+          git reset --hard origin/master
           npm install
           sudo chown -R ubuntu:ubuntu /home/ubuntu/ski-exo-web-app/.next
           sudo chmod -R 755 /home/ubuntu/ski-exo-web-app/.next
