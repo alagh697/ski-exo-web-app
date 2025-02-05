@@ -3,7 +3,7 @@ name: Deploy Next.js App to EC2
 on:
   push:
     branches:
-      - main  # Déclenche le workflow lors des push sur la branche "main"
+      - mster  # Déclenche le workflow lors des push sur la branche "main"
 
 jobs:
   deploy:
