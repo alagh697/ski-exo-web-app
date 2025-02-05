@@ -1,9 +1,9 @@
-name: Deploy Next.js App to EC2
+name: Deploy Next.js App
 
 on:
   push:
     branches:
-      - master  # Déclenche le workflow lors des push sur la branche "main"
+      - master 
 
 jobs:
   deploy:
@@ -18,52 +18,29 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts  # IP de ton serveur EC2 stockée dans les secrets
+          ssh-keyscan -H 54.155.72.23 >> ~/.ssh/known_hosts  # Remplace par ton IP
 
       - name: Vérifier la connexion SSH
-        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} "echo 'Connexion SSH réussie'"
+        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@54.155.72.23 "echo 'Connexion SSH réussie'"
 
-      - name: Mettre à jour le système sur le serveur EC2
+      - name: Corriger les permissions du dépôt
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} << 'EOF'
-            sudo apt update && sudo apt upgrade -y
-            curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-            sudo apt install -y nodejs
-            npm install -g pm2
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@54.155.72.23 << 'EOF'
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/ski-exo-web-app
+          sudo chmod -R 755 /home/ubuntu/ski-exo-web-app
           EOF
 
-      - name: Cloner ou mettre à jour le projet sur le serveur EC2
+      - name: Déployer sur le serveur
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} << 'EOF'
-            APP_DIR="/home/ubuntu/ski-exo-web-app"
-            REPO_URL="https://github.com/alagh697/ski-exo-web-app.git"
-            
-            # Vérifier si le dossier existe
-            if [ ! -d "$APP_DIR/.git" ]; then
-              # Cloner le repo
-              git clone $REPO_URL $APP_DIR
-            else
-              # Mettre à jour le repo
-              cd $APP_DIR
-              git reset --hard
-              git pull origin main
-            fi
-          EOF
-
-      - name: Installer les dépendances et builder l’application sur EC2
-        run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} << 'EOF'
-            APP_DIR="/home/ubuntu/ski-exo-web-app"
-            cd $APP_DIR
-            npm install
-            npm run build
-          EOF
-
-      - name: Démarrer l’application avec PM2 sur le serveur EC2
-        run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} << 'EOF'
-            APP_DIR="/home/ubuntu/ski-exo-web-app"
-            cd $APP_DIR
-            pm2 restart next-app || pm2 start node_modules/next/dist/bin/next --name "next-app" -- start
-            pm2 save
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@54.155.72.23 << 'EOF'
+          cd /home/ubuntu/ski-exo-web-app || git clone https://github.com/algh697/ski-exo-web-app.git /home/ubuntu/ski-exo-web-app && cd /home/ubuntu/ski-exo-web-app
+          git fetch origin main
+          git reset --hard origin/main
+          npm install
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/ski-exo-web-app/.next
+          sudo chmod -R 755 /home/ubuntu/ski-exo-web-app/.next
+          npm run build
+          pm2 delete next-app || true
+          pm2 start npm --name "next-app" -- run start
+          pm2 save
           EOF
