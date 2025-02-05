@@ -24,7 +24,7 @@ jobs:
         run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@54.155.72.23 "echo 'Connexion SSH réussie'"
 
       - name: Exécuter Ansible Playbook
-        uses: dawidd6/action-ansible-playbook@v3
+        uses: dawidd6/action-ansible-playbook@v2
         with:
           playbook: ansible/playbook.yml
           inventory: ansible/inventory.ini
