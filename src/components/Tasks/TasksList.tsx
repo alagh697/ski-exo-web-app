@@ -37,6 +37,7 @@ setTasks={setTasks}
            {tasks && tasks.length > 0 ?
 tasks?.map((task:any) =>
 <TasksListItem
+key={task?.id}
 task={task}
 tasks={tasks}
 setTasks={setTasks}
