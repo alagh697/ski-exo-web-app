@@ -4,7 +4,7 @@ import React from 'react'
 function HomePageHeroSection() {
   return (
     <section
-    className='w-full h-screen relative'
+    className='w-full h-screen relative overflow-hidden'
     >
       <Image
       src={`/ski.jpg`}
@@ -16,7 +16,7 @@ function HomePageHeroSection() {
       className='absolute top-0 left-0 w-full h-full bg-black/10 '
       >
         <h1
-        className='text-5xl font-bold -rotate-45 upercase text-blue-200'
+        className='text-5xl font-bold -rotate-2 upercase text-blue-200'
         >
         {`SKi eemi 2025 ci-cd.haaa kjbnjlnljnbb`}
         </h1>
