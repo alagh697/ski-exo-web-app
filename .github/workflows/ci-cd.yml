@@ -21,39 +21,41 @@ jobs:
           ssh-keyscan -H 34.251.4.225 >> ~/.ssh/known_hosts
 
       - name: Vérifier la connexion SSH
-        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@34.251.4.225 "echo 'Connexion SSH réussie'"
+        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@34.251.4.225 "echo 'Connexion SSH réussie'"
 
       - name: Corriger les permissions du dépôt
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@34.251.4.225 "
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@34.251.4.225 "
           sudo chown -R ubuntu:ubuntu /home/ubuntu/ski-exo-web-app &&
           sudo chmod -R 755 /home/ubuntu/ski-exo-web-app
           "
 
       - name: Mettre à jour le code
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@34.251.4.225 "
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@34.251.4.225 "
           cd /home/ubuntu/ski-exo-web-app &&
+          git reset --hard HEAD &&  # Supprime les changements locaux non commités
+          git clean -fd &&  # Supprime les fichiers non suivis
           git pull origin master
           "
 
       - name: Installer les dépendances
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@34.251.4.225 "
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@34.251.4.225 "
           cd /home/ubuntu/ski-exo-web-app &&
           npm install
           "
 
       - name: Construire l'application
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@34.251.4.225 "
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@34.251.4.225 "
           cd /home/ubuntu/ski-exo-web-app &&
           npm run build
           "
 
       - name: Démarrer l'application avec PM2
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@34.251.4.225 "
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@34.251.4.225 "
           cd /home/ubuntu/ski-exo-web-app &&
           pm2 delete next-app || true &&
           pm2 start npm --name 'next-app' -- run start &&
